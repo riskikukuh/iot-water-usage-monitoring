@@ -1,0 +1,9 @@
+.idea/
+.vscode/
+iot-water-usage-monitoring-firebase-adminsdk-kgolc-894267155c.json
+node_modules/
+build/
+tmp/
+temp/
+
+.env
