@@ -16,16 +16,16 @@ async function create(user_id: string, usage: number, usage_at: number, unit: st
     return inserted.id
 }
 
-async function getTodayUsage(group5minute: boolean = true) : Promise<WaterUsage[]> {
+async function getTodayUsage(user_id:string, group5minute: boolean = true) : Promise<WaterUsage[]> {
     const tempDate   = new Date()
     const startDate  = +new Date(tempDate.getFullYear(), tempDate.getMonth(), tempDate.getDate(), 0, 0, 0)
     const endDate    = +new Date(tempDate.getFullYear(), tempDate.getMonth(), tempDate.getDate(), 24, 0, 0)
 
-    const data = await getUsageByDate(startDate, endDate, group5minute)
+    const data = await getUsageByDate(user_id, startDate, endDate, group5minute)
     return data
 }
 
-async function getUsageByDate(startDateParams: number, endDateParams: number, group5minute: boolean = true, dateRestriction : boolean = true) : Promise<WaterUsage[]> {
+async function getUsageByDate(user_id: string, startDateParams: number, endDateParams: number, group5minute: boolean = true, dateRestriction : boolean = true) : Promise<WaterUsage[]> {
     const data = await AppDataSource.getRepository(WaterUsage).find({
         where: {
             usage_at: Between(startDateParams, endDateParams),

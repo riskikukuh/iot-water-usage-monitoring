@@ -5,8 +5,8 @@ import { getUsageByDate } from "./WaterUsageService"
 import { History } from "../entity/History";
 import { getUnit } from "./ConfigService";
 
-async function create(startDate: number, endDate: number) : Promise<string> {
-    const waterUsageByGivenTimeRange = await getUsageByDate(startDate, endDate, true, false)
+async function create(user_id:string, startDate: number, endDate: number) : Promise<string> {
+    const waterUsageByGivenTimeRange = await getUsageByDate(user_id, startDate, endDate, true, false)
     let totalUsage = 0
     for (let i = 0; i < waterUsageByGivenTimeRange.length; i++) {
         const e = waterUsageByGivenTimeRange[i];
