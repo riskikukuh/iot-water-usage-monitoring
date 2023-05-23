@@ -4,4 +4,7 @@ WORKDIR /usr/src/app
 COPY . .
 RUN rm -rf .env
 COPY .env_docker .env
+RUN npm install pm2 -g
+# Start app with pm2
+# pm2 start --name "main-app" npm -- run water-usage:debug
 RUN npm install

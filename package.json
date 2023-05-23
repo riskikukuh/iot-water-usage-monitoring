@@ -10,10 +10,10 @@
       "typeorm": "typeorm-ts-node-commonjs",
       "water-usage:debug": "ts-node src/test-water-usage-scheduller.ts",
       "aggregate:debug": "ts-node src/aggregate-scheduller.ts",
-      "migration:create": "./node_modules/.bin/ts-node ./node_modules/.bin/typeorm migration:create",
-      "migration:up": "./node_modules/.bin/ts-node ./node_modules/.bin/typeorm migration:run -d src/data-source.ts",
-      "migration:down": "./node_modules/.bin/ts-node ./node_modules/.bin/typeorm migration:revert -d src/data-source.ts",
-      "migration:generate": "./node_modules/.bin/ts-node ./node_modules/.bin/typeorm migration:generate ./src/migration/generated -d src/data-source.ts"
+      "migration:create": "ts-node ./node_modules/.bin/typeorm migration:create",
+      "migration:up": "ts-node ./node_modules/.bin/typeorm migration:run -d src/data-source.ts",
+      "migration:down": "ts-node ./node_modules/.bin/typeorm migration:revert -d src/data-source.ts",
+      "migration:generate": "ts-node ./node_modules/.bin/typeorm migration:generate ./src/migration/generated -d src/data-source.ts"
    },
    "keywords": [],
    "author": "",
