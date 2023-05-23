@@ -23,7 +23,7 @@ async function addWaterUsageHandler(req, res, next) {
         if (await getTresholdSystem()) {
             const treshold = await getTreshold()
             if (treshold > 0) {
-                const todayUsages = await getTodayUsage()
+                const todayUsages = await getTodayUsage(user_id)
                 let totalTodayUsages = 0
                 for (let i = 0; i < todayUsages.length; i++) {
                     const usage = todayUsages[i]
@@ -54,7 +54,8 @@ async function addWaterUsageHandler(req, res, next) {
 
 async function getTodayWaterUsageHandler(req, res, next) {
     try {
-        const todaWaterUsages = await getTodayUsage()
+        const { id } = req.auth
+        const todaWaterUsages = await getTodayUsage(id)
 
         res.statusCode = 200
         res.json({
