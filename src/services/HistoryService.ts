@@ -13,6 +13,7 @@ async function create(user_id:string, startDate: number, endDate: number) : Prom
         totalUsage += e.usage
     }
     const history       = new History()
+    history.user_id     = user_id
     history.water_usage = totalUsage
     history.unit        = await getUnit()
     history.start_date  = startDate
