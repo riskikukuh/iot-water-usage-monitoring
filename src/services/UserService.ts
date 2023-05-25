@@ -2,6 +2,15 @@ import { AppDataSource } from "../data-source"
 import { User } from "../entity/User"
 import { NotFoundError } from "../utils/errors/NotFoundError";
 
+async function getAllUser(isActive: boolean): Promise<User[]> {
+    const user = await AppDataSource.getRepository(User).find({
+        where: {
+            is_active: isActive ? 1 : 0,
+        }
+    })
+    return user
+}
+
 async function findUser(email: string, password: string): Promise<User> {
     const nodeEnvParams = process.env.NODE_ENV == 'prod' ? ` AND user.role != 'none'` : ''
     const user = await AppDataSource.createQueryBuilder(User, 'user')
@@ -32,6 +41,7 @@ async function getProfile(id: string): Promise<User> {
 export {
     findUser,
     getProfile,
+    getAllUser,
 }
 
 // async function create(usage: number, usage_at: number, unit: string) : Promise<string> {

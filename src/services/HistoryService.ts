@@ -4,8 +4,10 @@ import { WaterUsage } from "../entity/WaterUsage";
 import { getUsageByDate } from "./WaterUsageService"
 import { History } from "../entity/History";
 import { getUnit } from "./ConfigService";
+import { getProfile } from "./UserService"
 
 async function create(user_id:string, startDate: number, endDate: number) : Promise<string> {
+    const { price_per_meter } = await getProfile(user_id)
     const waterUsageByGivenTimeRange = await getUsageByDate(user_id, startDate, endDate, true, false)
     let totalUsage = 0
     for (let i = 0; i < waterUsageByGivenTimeRange.length; i++) {
@@ -18,6 +20,8 @@ async function create(user_id:string, startDate: number, endDate: number) : Prom
     history.unit        = await getUnit()
     history.start_date  = startDate
     history.end_date    = endDate
+    history.price_per_meter = price_per_meter
+    history.nominal = Math.round((totalUsage / 1000) * price_per_meter)
     history.created_at  = + new Date()
 
     const inserted = await AppDataSource.getRepository(History).save(history)

@@ -50,6 +50,11 @@ export class User {
         default: 0,
     })
     price_per_meter: number
+
+    @Column({
+        default: 1
+    })
+    is_active: number
     
     @Column({
         default: +new Date()

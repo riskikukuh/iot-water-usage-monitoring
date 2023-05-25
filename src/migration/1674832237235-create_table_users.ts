@@ -76,7 +76,7 @@ export class CreateTableUsers1674832237235 implements MigrationInterface {
                     name: "is_active",
                     type: "int",
                     isNullable: false,
-                    default: 0,
+                    default: 1,
                 }, {
                     name: "created_at",
                     type: "bigint",
