@@ -31,7 +31,6 @@ async function set(name: string, data: string): Promise<Config> {
         name,
     })
     if (!config) throw new NotFoundError()
-    console.log(data)
     config.value = data
     const newConfig = await AppDataSource.getRepository(Config).save(config)
     return newConfig

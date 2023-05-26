@@ -1,7 +1,27 @@
-import { Between } from "typeorm";
+import { Between, SimpleConsoleLogger } from "typeorm";
 import { AppDataSource } from "../data-source";
 import { WaterUsage } from "../entity/WaterUsage";
 import { getUnit } from "./ConfigService"
+
+async function getLatestUsage(user_id: string): Promise<WaterUsage | null> {
+    const temp = new Date()
+    const day = temp.getDate()
+    const month = temp.getMonth()
+    const year = temp.getFullYear()
+    const hour = temp.getHours()
+    const minute = temp.getMinutes()
+    var startDate;
+    if (minute % 5 == 0) {
+        startDate = new Date(year, month, day, hour, minute - 5, 0)
+    } else {
+        startDate = new Date(year, month, day, hour, minute - (minute % 5), 0)
+    }
+    
+    const endDate = new Date(year, month, day, hour, minute, 0)
+    const data = await getUsageByDate(user_id, +startDate, +endDate, false, true, false)
+
+    return data[0]
+}
 
 async function create(user_id: string, usage: number, usage_at: number, unit: string) : Promise<string> {
     const newWaterUsage      = new WaterUsage()
@@ -25,10 +45,17 @@ async function getTodayUsage(user_id:string, group5minute: boolean = true) : Pro
     return data
 }
 
-async function getUsageByDate(user_id: string, startDateParams: number, endDateParams: number, group5minute: boolean = true, dateRestriction : boolean = true) : Promise<WaterUsage[]> {
+async function getUsageByDate(user_id: string, startDateParams: number, endDateParams: number, group5minute: boolean = true, dateRestriction : boolean = true, orderAsc: boolean = true) : Promise<WaterUsage[]> {
+    const marginTimeError = 2000
     const data = await AppDataSource.getRepository(WaterUsage).find({
         where: {
-            usage_at: Between(startDateParams, endDateParams),
+            user_id,
+            usage_at: Between(startDateParams + marginTimeError, endDateParams + marginTimeError),
+        },
+        order: {
+            usage_at: {
+                direction: orderAsc ? 'ASC' : 'DESC',
+            }
         }
     })
     
@@ -90,4 +117,5 @@ export {
     create,
     getTodayUsage,
     getUsageByDate,
+    getLatestUsage,
 }

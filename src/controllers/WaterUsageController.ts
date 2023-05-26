@@ -1,14 +1,17 @@
-import { create, getTodayUsage, getUsageByDate } from "../services/WaterUsageService"
+import { create, getTodayUsage, getUsageByDate, getLatestUsage } from "../services/WaterUsageService"
 import { getHistories } from "../services/HistoryService"
+import { verifyUser } from "../services/UserService"
 import { validate } from "../utils/validator/ValidatorUtil"
 import { WaterUsageValidator } from "../utils/validator/WaterUsageValidator"
 import { Server } from "socket.io"
 import { pushFCMNotification, create as createNotif } from "../services/NotificationService"
 import { NotificationType } from "../utils/NotificationUtil"
 import { getTimeNotificationMuted, getTreshold, getTresholdSystem } from "../services/ConfigService"
+import AuthUtil = require("../utils/AuthUtil")
 
 async function addWaterUsageHandler(req, res, next) {
     try {
+        const socket = res.io
         const { usage, user_id, usage_at, unit } = req.body
         const body = new WaterUsageValidator()
         body.user_id = user_id
@@ -17,8 +20,20 @@ async function addWaterUsageHandler(req, res, next) {
         body.usage_at = usage_at
 
         await validate(body);
+        await verifyUser(user_id)
 
         const insertedWaterUsage = await create(user_id, usage, usage_at, unit)
+
+        // const latestUsage = await getLatestUsage(user_id)
+        // if (latestUsage) {
+        if (insertedWaterUsage) {
+            socket.of('/updateWaterUsage').to(user_id).emit('message', {
+                usage: usage,
+                unit: unit,
+                usage_at: usage,
+            })
+        }
+        // }
 
         if (await getTresholdSystem()) {
             const treshold = await getTreshold()
@@ -86,14 +101,30 @@ async function getHistoyWaterUsageHandler(req, res, next) {
 
 async function setupSocketWaterUsage(socket: Server) {
     const waterUsage = socket.of('/updateWaterUsage')
+    
     waterUsage.on('connection', function(socket) {
         console.log('A user connected')
+        
+        const { "x-authorization":token } = socket.handshake.headers;
+        
+        try {
+            const user = AuthUtil.validateToken(token)
+            socket.join(user.id)
+
+            socket.on('message', function (message) {
+                console.log(message)
+            })
+        } catch (err) {
+            socket.emit('error', err.message || 'Something went wrong!')
+            socket.disconnect();
+        }
 
         //Whenever someone disconnects this piece of code executed
         socket.on('disconnect', function () {
             console.log('A user disconnected')
         })
     })
+    return waterUsage
 }
 
 export {

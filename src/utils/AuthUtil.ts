@@ -14,14 +14,11 @@ const AuthUtil = {
     },
     validateToken: (payload) => {
         const decoded = jwt.verify(payload, process.env.JWT_SECRET_KEY);
-        console.log(decoded)
-        if (decoded) {
-            // const expiresIn = decoded.expiresIn;
-            // if (decoded) {
-                
-            // }
+        if (!decoded) {
+            throw new AuthError()
         }
-        throw new AuthError()
+        const { id, firstname, role } = decoded as jwt.JwtPayload
+        return { id, firstname, role }
     },
     jwtMiddleware: () => {
         return expressjwt({

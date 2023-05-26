@@ -2,6 +2,24 @@ import { AppDataSource } from "../data-source"
 import { User } from "../entity/User"
 import { NotFoundError } from "../utils/errors/NotFoundError";
 
+async function create({  email, firstname, lastname, address, latitude, longitude, password }): Promise<String> { 
+    
+    const user = new User()
+    user.email = email
+    user.firstname = firstname
+    user.lastname = lastname
+    user.address = address
+    user.latitude = latitude
+    user.longitude = longitude
+    user.password = password
+    user.role = 'customer'
+    user.created_at  = + new Date()
+
+    const insertedUser = await AppDataSource.getRepository(User).save(user)
+    
+    return insertedUser.id
+}
+
 async function getAllUser(isActive: boolean): Promise<User[]> {
     const user = await AppDataSource.getRepository(User).find({
         where: {
@@ -9,6 +27,17 @@ async function getAllUser(isActive: boolean): Promise<User[]> {
         }
     })
     return user
+}
+
+async function verifyUser(id: string) {
+    const user = await AppDataSource.getRepository(User).find({
+        where: {
+            id,
+        }
+    })
+    if (user.length < 1) {
+        throw new NotFoundError('User tidak ditemukan')
+    }
 }
 
 async function findUser(email: string, password: string): Promise<User> {
@@ -39,19 +68,9 @@ async function getProfile(id: string): Promise<User> {
 }
 
 export {
+    create,
     findUser,
     getProfile,
     getAllUser,
+    verifyUser,
 }
-
-// async function create(usage: number, usage_at: number, unit: string) : Promise<string> {
-//     const newWaterUsage      = new User()
-//     newWaterUsage.usage      = usage
-//     newWaterUsage.unit       = unit,
-//     newWaterUsage.usage_at   = usage_at
-//     newWaterUsage.created_at = +new Date()
-
-//     const inserted = await AppDataSource.getRepository(WaterUsage).save(newWaterUsage)
-
-//     return inserted.id
-// }

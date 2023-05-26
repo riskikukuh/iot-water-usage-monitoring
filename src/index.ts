@@ -3,14 +3,9 @@ import * as bodyParser from 'body-parser';
 import * as httpServer from 'http';
 import { Server } from "socket.io"
 import { AppDataSource } from "./data-source"
-import { waterUsageRouter } from "../src/route/WaterUsageRoute"
-import { notificationRouter } from "../src/route/NotificationRoute"
 import { errorMiddleware } from "./middleware/ErrorMiddleware"
 import { setupSocketWaterUsage } from "./controllers/WaterUsageController"
 import { initializeFCM } from "./services/NotificationService"
-import { configRouter } from "./route/ConfigRoute"
-import { authRouter } from "./route/AuthRoute"
-import { userRouter } from "./route/UserRoute"
 import { apiRouter } from "./route/ApiRoute"
 
 AppDataSource.initialize().then(async () => {
@@ -33,18 +28,18 @@ AppDataSource.initialize().then(async () => {
         })
     )
 
+    const setupedSocket = setupSocketWaterUsage(socket)
+    const socketMiddleware = function (req, res, next) {
+        res.io = socket
+        next()
+    }
+    app.use(socketMiddleware)
     app.use(apiRouter);
-    // app.use(authRouter)
-    // app.use(userRouter)
-    // app.use(waterUsageRouter)
-    // app.use(notificationRouter)
-    // app.use(configRouter)
     app.use(errorMiddleware)
 
-    setupSocketWaterUsage(socket)
 
     server.listen(port, host, () => {
-        console.log(`Example app listening at http://${host}:${port}`);
+        console.log(`# Iot Monitoring Water Usages Started, listening at http://${host}:${port}`);
     })
 
 
