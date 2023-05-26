@@ -90,7 +90,7 @@ export class CreateTableUsers1674832237235 implements MigrationInterface {
         }));
         
         await queryRunner.query(`INSERT INTO users (id, email, password, firstname, lastname, address, latitude, longitude, role, treshold_system, treshold, price_per_meter, last_on, is_active, created_at) 
-            VALUES ('9d0a806d-0fd5-4558-bedf-f9e5a660a246', 'unknown@app.com', 'password', 'unknown', 'unknown', 'unknown', 0, 0, 'none', 'off', 0, 0, 0, 0, 1681396273638)`);
+            VALUES ('9d0a806d-0fd5-4558-bedf-f9e5a660a246', 'unknown@app.com', 'password', 'unknown', 'unknown', 'unknown', 0, 0, 'none', 'off', 0, 0, 0, 1, 1681396273638)`);
     }
 
     public async down(queryRunner: QueryRunner): Promise<void> {
