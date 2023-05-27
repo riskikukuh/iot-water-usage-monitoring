@@ -1,19 +1,14 @@
 import { Between } from "typeorm";
 import { AppDataSource } from "../data-source";
 import { WaterUsage } from "../entity/WaterUsage";
-import { getUsageByDate } from "./WaterUsageService"
+import { getTotalUsageByDate, getUsageByDate } from "./WaterUsageService"
 import { History } from "../entity/History";
 import { getUnit } from "./ConfigService";
 import { getProfile } from "./UserService"
 
 async function create(user_id:string, startDate: number, endDate: number) : Promise<string> {
     const { price_per_meter } = await getProfile(user_id)
-    const waterUsageByGivenTimeRange = await getUsageByDate(user_id, startDate, endDate, true, false)
-    let totalUsage = 0
-    for (let i = 0; i < waterUsageByGivenTimeRange.length; i++) {
-        const e = waterUsageByGivenTimeRange[i];
-        totalUsage += e.usage
-    }
+    const totalUsage = await getTotalUsageByDate(user_id, startDate, endDate)
     const history       = new History()
     history.user_id     = user_id
     history.water_usage = totalUsage
