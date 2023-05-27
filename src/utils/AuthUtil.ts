@@ -15,7 +15,7 @@ const AuthUtil = {
     validateToken: (payload) => {
         const decoded = jwt.verify(payload, process.env.JWT_SECRET_KEY);
         if (!decoded) {
-            throw new AuthError()
+            throw new AuthError("Token tidak valid")
         }
         const { id, firstname, role } = decoded as jwt.JwtPayload
         return { id, firstname, role }

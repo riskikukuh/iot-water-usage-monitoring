@@ -24,16 +24,13 @@ async function addWaterUsageHandler(req, res, next) {
 
         const insertedWaterUsage = await create(user_id, usage, usage_at, unit)
 
-        // const latestUsage = await getLatestUsage(user_id)
-        // if (latestUsage) {
         if (insertedWaterUsage) {
-            socket.of('/updateWaterUsage').to(user_id).emit('message', {
+            socket.of('/updateWaterUsage').to(user_id).emit('updateUsages', {
                 usage: usage,
                 unit: unit,
                 usage_at: usage,
             })
         }
-        // }
 
         if (await getTresholdSystem()) {
             const treshold = await getTreshold()
@@ -111,11 +108,18 @@ async function setupSocketWaterUsage(socket: Server) {
             const user = AuthUtil.validateToken(token)
             socket.join(user.id)
 
-            socket.on('message', function (message) {
+            socket.on('updateUsages', function (message) {
                 console.log(message)
             })
         } catch (err) {
-            socket.emit('error', err.message || 'Something went wrong!')
+            const errMsg = err.message || 'Something went wrong!'
+            const errorResponse = {
+                success: false,
+                status: 403,
+                message: errMsg,
+                stack: process.env.NODE_ENV === 'development' ? err.stack : undefined
+            }
+            socket.emit('error', errorResponse)
             socket.disconnect();
         }
 
