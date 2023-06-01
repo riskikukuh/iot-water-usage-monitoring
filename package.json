@@ -9,7 +9,7 @@
       "debug": "nodemon --exec ts-node src/index.ts",
       "typeorm": "typeorm-ts-node-commonjs",
       "water-usage:debug": "ts-node src/test-water-usage-scheduller.ts",
-      "aggregate:debug": "ts-node src/aggregate-scheduller.ts",
+      "history-scheduller": "ts-node src/history-scheduller.ts",
       "bill-job": "ts-node src/bill-scheduller.ts",
       "bill:debug": "ts-node src/test-bill-scheduller.ts",
       "add-bill": "ts-node src/manual-add-bill.ts",
