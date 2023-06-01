@@ -45,7 +45,7 @@ async function addWaterUsageHandler(req, res, next) {
                     const mutedTime = await getTimeNotificationMuted()
                     const now = +new Date()
                     if ( mutedTime < 1 || (mutedTime > 0 && now > mutedTime)) {
-                        const msgId = await pushFCMNotification("Peringatan Penggunaan Air", "Jumlah pemakaian hari ini telah mencapai ambang batas!", NotificationType.ALERT)
+                        const msgId = await pushFCMNotification(user_id, "Peringatan Penggunaan Air", "Jumlah pemakaian hari ini telah mencapai ambang batas!", NotificationType.ALERT)
                     }
                 }
             }
