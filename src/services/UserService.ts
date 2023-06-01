@@ -1,6 +1,7 @@
 import { AppDataSource } from "../data-source"
 import { User } from "../entity/User"
 import { NotFoundError } from "../utils/errors/NotFoundError";
+import { UserRole } from "../utils/RoleUtil";
 
 async function create({  email, firstname, lastname, address, latitude, longitude, password }): Promise<String> { 
     
@@ -20,10 +21,11 @@ async function create({  email, firstname, lastname, address, latitude, longitud
     return insertedUser.id
 }
 
-async function getAllUser(isActive: boolean): Promise<User[]> {
+async function getAllUser(isActive: boolean, userRole: UserRole = null): Promise<User[]> {
     const user = await AppDataSource.getRepository(User).find({
         where: {
             is_active: isActive ? 1 : 0,
+            role: userRole == null ? null : userRole,
         }
     })
     return user
@@ -38,6 +40,13 @@ async function verifyUser(id: string) {
     if (user.length < 1) {
         throw new NotFoundError('User tidak ditemukan')
     }
+}
+
+async function getUserById(id: string) : Promise<User | null> {
+    const user = await AppDataSource.getRepository(User).findOneBy({
+        id,
+    })
+    return user
 }
 
 async function findUser(email: string, password: string): Promise<User> {
@@ -73,4 +82,5 @@ export {
     getProfile,
     getAllUser,
     verifyUser,
+    getUserById,
 }

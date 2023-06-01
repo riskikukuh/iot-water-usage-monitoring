@@ -1,10 +1,10 @@
 import { Between } from "typeorm";
 import { AppDataSource } from "../data-source";
-import { WaterUsage } from "../entity/WaterUsage";
 import { getTotalUsageByDate, getUsageByDate } from "./WaterUsageService"
 import { History } from "../entity/History";
 import { getUnit } from "./ConfigService";
 import { getProfile } from "./UserService"
+import { UsagePriceType } from "../utils/UsagePriceType";
 
 async function create(user_id:string, startDate: number, endDate: number) : Promise<string> {
     const { price_per_meter } = await getProfile(user_id)
@@ -35,7 +35,19 @@ async function getHistories(user_id: string, startDate: number | null = null, en
     return data
 }
 
+async function getUsageAndPriceByDate(user_id: string, startDate: number, endDate: number): Promise<UsagePriceType> {
+    const { total_usage, total_bill } = await AppDataSource.getRepository(History)
+        .createQueryBuilder('h')
+        .addSelect('SUM(h.water_usage)', 'total_usage')
+        .addSelect('SUM(h.nominal)', 'total_bill')
+        .where('h.user_id = :id', { id: user_id})
+        .getRawOne()
+        
+    return { totalUsage: total_usage ?? 0, totalBill: total_bill ?? 0 }
+}
+
 export {
     create, 
     getHistories,
+    getUsageAndPriceByDate,
 }

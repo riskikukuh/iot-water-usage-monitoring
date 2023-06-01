@@ -47,7 +47,7 @@ export class CreateTableUsers1674832237235 implements MigrationInterface {
                     type: "float",
                     isNullable: true,
                 }, {
-                    // admin, operator, customer, none
+                    // superadmin, officer, customer, none
                     name: "role",
                     type: "varchar",
                     length: "25",

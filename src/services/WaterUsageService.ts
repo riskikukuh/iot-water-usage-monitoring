@@ -6,9 +6,7 @@ import { getUnit } from "./ConfigService"
 async function getTotalUsageByDate(user_id: string, startDate: number, endDate: number): Promise<number> {
     const { total_usage } = await AppDataSource.getRepository(WaterUsage)
         .createQueryBuilder('wu')
-        .select(
-            'COUNT(wu.usage) as total_usage'
-        )
+        .addSelect('SUM(wu.usage)', 'total_usage')
         .where('wu.user_id = :id', { id: user_id})
         .getRawOne()
 

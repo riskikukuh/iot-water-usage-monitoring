@@ -32,8 +32,8 @@ function initializeFCM() {
     })
 }
 
-async function pushFCMNotification(title: string, description: string, type: NotificationType): Promise<string> {
-    const topic = "notifications"
+async function pushFCMNotification(user_id: string, title: string, description: string, type: NotificationType): Promise<string> {
+    const topic = `/notifications/${user_id}`
     
     const message = {
         notification: {

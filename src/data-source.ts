@@ -15,6 +15,7 @@ import { CreateTableUsers1674832237235 } from "./migration/1674832237235-create_
 
 import * as dotenv from "dotenv";
 import { User } from "./entity/User"
+import { AddDemoUser1685606748550 } from "./migration/1685606748550-add_demo_user"
 dotenv.config();
 
 export const AppDataSource = new DataSource({
@@ -41,6 +42,7 @@ export const AppDataSource = new DataSource({
         CreateTableNotifications1674832644676,
         createTableBills1674833432610,
         CreateTableHistory1674833848111,
+        AddDemoUser1685606748550,
     ],
     subscribers: [],
 })

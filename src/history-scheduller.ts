@@ -2,20 +2,22 @@ import * as schedule from "node-schedule"
 import { AppDataSource } from "./data-source"
 import { create } from "./services/HistoryService"
 import { getAllUser } from "./services/UserService"
+import { UserRole } from "./utils/RoleUtil"
 
 AppDataSource.initialize().then(async () => {
-    console.log("Start Aggregate Service")
+    console.log("Start History Service")
     
     // const userIdTesting = '9d0a806d-0fd5-4558-bedf-f9e5a660a246'
 
     schedule.scheduleJob('0 0 * * *', async function() {
 
         const now = new Date()
+        now.toLocaleString('en-US', { timeZone: 'Asia/Jakarta' });
         const day = now.getDate()
         const month = now.getMonth()
         const year = now.getFullYear()
 
-        const allUser = await getAllUser(true)
+        const allUser = await getAllUser(true, UserRole.CUSTOMER)
         for (let i = 0; i < allUser.length; i++) {
             const user = allUser[i]
             const { id } = user

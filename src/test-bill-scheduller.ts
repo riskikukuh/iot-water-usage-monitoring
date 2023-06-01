@@ -6,12 +6,15 @@ import { UserRole } from "./utils/RoleUtil"
 import { initializeFCM } from "./services/NotificationService"
 
 AppDataSource.initialize().then(async () => {
-    
+
     initializeFCM()
 
-    console.log("Start Bill Service")
+    console.log("Start Bill Service - Debug")
     
-    schedule.scheduleJob('0 0 L * *', async function() {
+    const targetGeneratedBill = '9d0a806d-0fd5-4558-bedf-f9e5a660a246'
+
+    // schedule.scheduleJob('0 0 L * *', async function() {
+    schedule.scheduleJob('* * * * *', async function() {
 
         const now = new Date()
         now.toLocaleString('en-US', { timeZone: 'Asia/Jakarta' });

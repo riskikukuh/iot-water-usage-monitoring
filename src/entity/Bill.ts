@@ -9,6 +9,9 @@ export class Bill {
     id: string
 
     @Column()
+    user_id: string
+
+    @Column()
     water_usage: number
 
     @Column()

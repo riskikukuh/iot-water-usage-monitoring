@@ -16,7 +16,8 @@ import { validate } from "../utils/validator/ValidatorUtil"
 
 async function testPush(req, res, next) {
     try {
-        await pushFCMNotification("Test title", "Test description", NotificationType.ALERT)
+        const idPelangganDemo1 = "c47158fd-069d-40ae-bb10-9bdfe1b6fd56"
+        await pushFCMNotification(idPelangganDemo1, "Test title", "Test description", NotificationType.ALERT)
         res.json({
             success: true,
         })

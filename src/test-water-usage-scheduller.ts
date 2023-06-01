@@ -3,15 +3,18 @@ import { AppDataSource } from "./data-source"
 import { create } from "./services/WaterUsageService"
 import * as dotenv from "dotenv"
 import axios from "axios"
-import { resolve } from "path/posix"
-import { response } from "express"
+
 dotenv.config()
 
 AppDataSource.initialize().then(async () => {
+    
+    console.log("Start Dummy water usage")
 
     const host = process.env.HOST
     const port = parseInt(process.env.PORT)
-    const userIdTesting = '9d0a806d-0fd5-4558-bedf-f9e5a660a246'
+    // const userIdTesting = '9d0a806d-0fd5-4558-bedf-f9e5a660a246'
+    const demoPelanggan1 = 'c47158fd-069d-40ae-bb10-9bdfe1b6fd56'
+    const userId = demoPelanggan1
     const unit = 'liter/m'
     
     console.log("Start debug")
@@ -31,7 +34,7 @@ AppDataSource.initialize().then(async () => {
         counter += 1
 
         const requestBody = {
-            user_id: "9d0a806d-0fd5-4558-bedf-f9e5a660a246",
+            user_id: userId,
             usage: Math.floor(Math.random() * (130 - 0) + 0),
             unit: "liter/m",
             usage_at: +new Date(),
