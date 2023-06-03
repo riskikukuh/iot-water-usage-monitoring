@@ -2,6 +2,8 @@ FROM node:18-alpine
 
 WORKDIR /usr/src/app
 COPY . .
+RUN apt-get -y update
+RUN apt-get -y install vim nano
 RUN rm -rf .env
 COPY .env_docker .env
 RUN npm install pm2 -g

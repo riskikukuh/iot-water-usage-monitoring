@@ -19,17 +19,20 @@ AppDataSource.initialize().then(async () => {
 
         const allUser = await getAllUser(true, UserRole.CUSTOMER)
         for (let i = 0; i < allUser.length; i++) {
-            const user = allUser[i]
-            const { id } = user
+            try {
+                const user = allUser[i]
+                const { id } = user
 
-            const startDate = +new Date(year, month, day - 1, 0, 0, 0)
-            const endDate = +new Date(year, month, day, 0, 0, 0)
+                const startDate = +new Date(year, month, day - 1, 0, 0, 0)
+                const endDate = +new Date(year, month, day, 0, 0, 0)
 
-            console.log(`# Aggregating usage for 1 day, start: ${startDate} end: ${endDate}`)
+                console.log(`# Aggregating usage for 1 day, start: ${startDate} end: ${endDate}`)
 
-            const aggregateId = await create(id, startDate, endDate)
-            console.log(`Success make aggregate with id: ${aggregateId}`)
-            
+                const aggregateId = await create(id, startDate, endDate)
+                console.log(`Success make aggregate with id: ${aggregateId}`)
+            } catch (err) {
+                console.error(`History Scheduler error: ${err}`)
+            }            
         }
     })
 })
