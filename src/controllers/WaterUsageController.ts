@@ -28,7 +28,7 @@ async function addWaterUsageHandler(req, res, next) {
             socket.of('/updateWaterUsage').to(user_id).emit('updateUsages', {
                 usage: usage,
                 unit: unit,
-                usage_at: usage,
+                usage_at: usage_at,
             })
         }
 
