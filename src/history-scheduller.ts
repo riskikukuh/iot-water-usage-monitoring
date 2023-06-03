@@ -25,7 +25,7 @@ AppDataSource.initialize().then(async () => {
             const startDate = +new Date(year, month, day - 1, 0, 0, 0)
             const endDate = +new Date(year, month, day, 0, 0, 0)
 
-            console.log(`# Aggregating usage for 1 day, start: ${+startDate} end: ${+endDate}`)
+            console.log(`# Aggregating usage for 1 day, start: ${startDate} end: ${endDate}`)
 
             const aggregateId = await create(id, startDate, endDate)
             console.log(`Success make aggregate with id: ${aggregateId}`)
