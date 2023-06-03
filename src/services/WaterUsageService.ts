@@ -4,10 +4,11 @@ import { WaterUsage } from "../entity/WaterUsage";
 import { getUnit } from "./ConfigService"
 
 async function getTotalUsageByDate(user_id: string, startDate: number, endDate: number): Promise<number> {
+    const marginTimeError = 2000
     const { total_usage } = await AppDataSource.getRepository(WaterUsage)
         .createQueryBuilder('wu')
         .addSelect('SUM(wu.usage)', 'total_usage')
-        .where('wu.user_id = :id', { id: user_id})
+        .where('wu.user_id = :id AND wu.usage_at BETWEEN :startDate AND :endDate', { id: user_id, startDate: startDate + marginTimeError, endDate: endDate + marginTimeError })
         .getRawOne()
 
     return total_usage ?? 0
@@ -26,19 +27,19 @@ async function getLatestUsage(user_id: string): Promise<WaterUsage | null> {
     } else {
         startDate = new Date(year, month, day, hour, minute - (minute % 5), 0)
     }
-    
+
     const endDate = new Date(year, month, day, hour, minute, 0)
     const data = await getUsageByDate(user_id, +startDate, +endDate, false, true, false)
 
     return data[0]
 }
 
-async function create(user_id: string, usage: number, usage_at: number, unit: string) : Promise<string> {
-    const newWaterUsage      = new WaterUsage()
-    newWaterUsage.user_id    = user_id
-    newWaterUsage.usage      = usage
-    newWaterUsage.unit       = unit,
-    newWaterUsage.usage_at   = usage_at
+async function create(user_id: string, usage: number, usage_at: number, unit: string): Promise<string> {
+    const newWaterUsage = new WaterUsage()
+    newWaterUsage.user_id = user_id
+    newWaterUsage.usage = usage
+    newWaterUsage.unit = unit,
+        newWaterUsage.usage_at = usage_at
     newWaterUsage.created_at = +new Date()
 
     const inserted = await AppDataSource.getRepository(WaterUsage).save(newWaterUsage)
@@ -46,16 +47,16 @@ async function create(user_id: string, usage: number, usage_at: number, unit: st
     return inserted.id
 }
 
-async function getTodayUsage(user_id:string, group5minute: boolean = true) : Promise<WaterUsage[]> {
-    const tempDate   = new Date()
-    const startDate  = +new Date(tempDate.getFullYear(), tempDate.getMonth(), tempDate.getDate(), 0, 0, 0)
-    const endDate    = +new Date(tempDate.getFullYear(), tempDate.getMonth(), tempDate.getDate(), 24, 0, 0)
+async function getTodayUsage(user_id: string, group5minute: boolean = true): Promise<WaterUsage[]> {
+    const tempDate = new Date()
+    const startDate = +new Date(tempDate.getFullYear(), tempDate.getMonth(), tempDate.getDate(), 0, 0, 0)
+    const endDate = +new Date(tempDate.getFullYear(), tempDate.getMonth(), tempDate.getDate(), 24, 0, 0)
 
     const data = await getUsageByDate(user_id, startDate, endDate, group5minute)
     return data
 }
 
-async function getUsageByDate(user_id: string, startDateParams: number, endDateParams: number, group5minute: boolean = true, dateRestriction : boolean = true, orderAsc: boolean = true) : Promise<WaterUsage[]> {
+async function getUsageByDate(user_id: string, startDateParams: number, endDateParams: number, group5minute: boolean = true, dateRestriction: boolean = true, orderAsc: boolean = true): Promise<WaterUsage[]> {
     const marginTimeError = 2000
     const data = await AppDataSource.getRepository(WaterUsage).find({
         where: {
@@ -68,11 +69,11 @@ async function getUsageByDate(user_id: string, startDateParams: number, endDateP
             }
         }
     })
-    
+
     const resultWaterUsages = []
 
     if (group5minute) {
-        
+
         const now = new Date()
         const unit = await getUnit()
 
@@ -86,10 +87,10 @@ async function getUsageByDate(user_id: string, startDateParams: number, endDateP
             } else {
                 startDate = +new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, minute - 5, 0)
             }
-            
+
             const endDate = +new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, minute, 0)
 
-            const waterUsage5Minutes = data.filter(( e ) => { 
+            const waterUsage5Minutes = data.filter((e) => {
                 return e.usage_at >= startDate && e.usage_at < endDate
             })
 
@@ -109,7 +110,7 @@ async function getUsageByDate(user_id: string, startDateParams: number, endDateP
             if (dateRestriction && +now < endDate) {
                 condition = false
             }
-            
+
             if (minute >= 1440) {
                 condition = false
             }
@@ -118,8 +119,8 @@ async function getUsageByDate(user_id: string, startDateParams: number, endDateP
         }
 
         return resultWaterUsages
-    } 
-    
+    }
+
     return data
 }
 

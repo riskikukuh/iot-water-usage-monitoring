@@ -19,17 +19,24 @@ async function create(user_id:string, startDate: number, endDate: number) : Prom
     history.nominal = Math.round((totalUsage / 1000) * price_per_meter)
     history.created_at  = + new Date()
 
+    console.log(history)
+
     const inserted = await AppDataSource.getRepository(History).save(history)
 
     return inserted.id
 }
 
 async function getHistories(user_id: string, startDate: number | null = null, endDate: number | null = null) : Promise<History[]> {
+    const params = {
+        user_id: user_id,
+        created_at: startDate != null && endDate != null ? Between(startDate, endDate) : null,
+    }
+    console.log(params)
     const data = AppDataSource.getRepository(History).find({
-        where: startDate != null && endDate != null ? {
-            user_id: user_id,
-            created_at: Between(startDate, endDate)
-        } : null,
+        where: params,
+        order: {
+            created_at: 'ASC',
+        }
     })
 
     return data
