@@ -45,9 +45,11 @@ async function getHistories(user_id: string, startDate: number | null = null, en
 async function getUsageAndPriceByDate(user_id: string, startDate: number, endDate: number): Promise<UsagePriceType> {
     const { total_usage, total_bill } = await AppDataSource.getRepository(History)
         .createQueryBuilder('h')
+        .select('h.user_id')
         .addSelect('SUM(h.water_usage)', 'total_usage')
         .addSelect('SUM(h.nominal)', 'total_bill')
         .where('h.user_id = :id', { id: user_id})
+        .groupBy('h.user_id')
         .getRawOne()
         
     return { totalUsage: total_usage ?? 0, totalBill: total_bill ?? 0 }

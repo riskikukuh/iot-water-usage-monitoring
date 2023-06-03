@@ -7,8 +7,10 @@ async function getTotalUsageByDate(user_id: string, startDate: number, endDate: 
     const marginTimeError = 2000
     const { total_usage } = await AppDataSource.getRepository(WaterUsage)
         .createQueryBuilder('wu')
+        .select("wu.user_id")
         .addSelect('SUM(wu.usage)', 'total_usage')
         .where('wu.user_id = :id AND wu.usage_at BETWEEN :startDate AND :endDate', { id: user_id, startDate: startDate + marginTimeError, endDate: endDate + marginTimeError })
+        .groupBy('wu.user_id')
         .getRawOne()
 
     return total_usage ?? 0

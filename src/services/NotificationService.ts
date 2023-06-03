@@ -33,7 +33,7 @@ function initializeFCM() {
 }
 
 async function pushFCMNotification(user_id: string, title: string, description: string, type: NotificationType): Promise<string> {
-    const topic = `/notifications/${user_id}`
+    const topic = `notifications.${user_id}`
     
     const message = {
         notification: {
@@ -44,14 +44,15 @@ async function pushFCMNotification(user_id: string, title: string, description: 
     }
 
     const messageId = await messaging().send(message)
-    await create(title, description, type, messageId)
+    await create(user_id, title, description, type, messageId)
     return messageId
 }
 
-async function create(title: string, description: string, type: NotificationType, messageId: string): Promise<string> {
+async function create(user_id: string, title: string, description: string, type: NotificationType, messageId: string): Promise<string> {
     try {
         const notification = new Notification()
         notification.title = title
+        notification.user_id = user_id
         notification.description = description
         notification.type = type
         notification.message_id = messageId
