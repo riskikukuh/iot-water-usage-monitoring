@@ -64,6 +64,16 @@ async function findUser(email: string, password: string): Promise<User> {
     return user
 }
 
+async function updateTresholdCounter(user_id: string, value: number): Promise<void> {
+    const user = await AppDataSource.getRepository(User).findOne({
+        where: {
+            id: user_id,
+        }
+    })
+    user.treshold_counter = value
+    await AppDataSource.getRepository(User).save(user)
+}
+
 async function getProfile(id: string): Promise<User> {
     const user = await AppDataSource.getRepository(User).findOne({
         where: {
@@ -83,4 +93,5 @@ export {
     getAllUser,
     verifyUser,
     getUserById,
+    updateTresholdCounter,
 }

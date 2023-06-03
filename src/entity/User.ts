@@ -49,6 +49,11 @@ export class User {
     @Column({
         default: 0,
     })
+    treshold_counter: number
+
+    @Column({
+        default: 0,
+    })
     price_per_meter: number
 
     @Column({

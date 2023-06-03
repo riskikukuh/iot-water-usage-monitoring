@@ -16,6 +16,7 @@ import { CreateTableUsers1674832237235 } from "./migration/1674832237235-create_
 import * as dotenv from "dotenv";
 import { User } from "./entity/User"
 import { AddDemoUser1685606748550 } from "./migration/1685606748550-add_demo_user"
+import { AddUserTresholdCounter1685806124911 } from "./migration/1685806124911-add_user_treshold_counter"
 dotenv.config();
 
 export const AppDataSource = new DataSource({
@@ -43,6 +44,7 @@ export const AppDataSource = new DataSource({
         createTableBills1674833432610,
         CreateTableHistory1674833848111,
         AddDemoUser1685606748550,
+        AddUserTresholdCounter1685806124911,
     ],
     subscribers: [],
 })

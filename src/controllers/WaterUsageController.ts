@@ -8,6 +8,7 @@ import { pushFCMNotification, create as createNotif } from "../services/Notifica
 import { NotificationType } from "../utils/NotificationUtil"
 import { getTimeNotificationMuted, getTreshold, getTresholdSystem } from "../services/ConfigService"
 import AuthUtil = require("../utils/AuthUtil")
+import { getProfile, updateTresholdCounter } from "../services/UserService"
 
 async function addWaterUsageHandler(req, res, next) {
     try {
@@ -22,6 +23,8 @@ async function addWaterUsageHandler(req, res, next) {
         await validate(body);
         await verifyUser(user_id)
 
+        const user = await getProfile(user_id)
+
         const insertedWaterUsage = await create(user_id, usage, usage_at, unit)
 
         if (insertedWaterUsage) {
@@ -32,6 +35,8 @@ async function addWaterUsageHandler(req, res, next) {
             })
         }
 
+        const maxTresholdCounter = 5
+
         if (await getTresholdSystem()) {
             const treshold = await getTreshold()
             if (treshold > 0) {
@@ -41,16 +46,19 @@ async function addWaterUsageHandler(req, res, next) {
                     const usage = todayUsages[i]
                     totalTodayUsages += usage.usage
                 }
+                let newTresholdCounter = 0
                 if (totalTodayUsages >= treshold) {
-                    const mutedTime = await getTimeNotificationMuted()
-                    const now = +new Date()
-                    if ( mutedTime < 1 || (mutedTime > 0 && now > mutedTime)) {
+                    if (user.treshold_counter > maxTresholdCounter) {
+                        newTresholdCounter = 0
                         const msgId = await pushFCMNotification(user_id, "Peringatan Penggunaan Air", "Jumlah pemakaian hari ini telah mencapai ambang batas!", NotificationType.ALERT)
+                    } else {
+                        newTresholdCounter = user.treshold_counter + 1
                     }
+                    await updateTresholdCounter(user_id, newTresholdCounter)
                 }
             }
         }
-        
+
         res.statusCode = 201
         res.json({
             success: true,
@@ -58,7 +66,7 @@ async function addWaterUsageHandler(req, res, next) {
                 id: insertedWaterUsage,
             }
         })
-    } catch(err) {
+    } catch (err) {
         console.error(`Error ${err}`);
         next(err);
     }
@@ -98,12 +106,12 @@ async function getHistoyWaterUsageHandler(req, res, next) {
 
 async function setupSocketWaterUsage(socket: Server) {
     const waterUsage = socket.of('/updateWaterUsage')
-    
-    waterUsage.on('connection', function(socket) {
+
+    waterUsage.on('connection', function (socket) {
         console.log('A user connected')
-        
-        const { "x-authorization":token } = socket.handshake.headers;
-        
+
+        const { "x-authorization": token } = socket.handshake.headers;
+
         try {
             const user = AuthUtil.validateToken(token)
             socket.join(user.id)
