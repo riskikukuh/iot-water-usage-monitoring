@@ -74,6 +74,24 @@ async function updateTresholdCounter(user_id: string, value: number): Promise<vo
     await AppDataSource.getRepository(User).save(user)
 }
 
+async function edit(user_id: string, pricePerMeter: number = null, tresholdSystem: string = null, treshold: number = null): Promise<void> {
+    const user = await AppDataSource.getRepository(User).findOne({
+        where: {
+            id: user_id,
+        },
+    })
+    if (pricePerMeter) {
+        user.price_per_meter = pricePerMeter
+    }
+    if (tresholdSystem) {
+        user.treshold_system = tresholdSystem
+    }
+    if (treshold) {
+        user.treshold = treshold
+    }
+    await AppDataSource.getRepository(User).save(user)
+}
+
 async function getProfile(id: string): Promise<User> {
     const user = await AppDataSource.getRepository(User).findOne({
         where: {
@@ -87,6 +105,7 @@ async function getProfile(id: string): Promise<User> {
 }
 
 export {
+    edit,
     create,
     findUser,
     getProfile,

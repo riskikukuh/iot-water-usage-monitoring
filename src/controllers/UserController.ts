@@ -1,6 +1,6 @@
-import { getProfile, create } from "../services/UserService"
+import { getProfile, create, edit } from "../services/UserService"
 import { rawToSafeUser } from "../utils/mapper/UserMapper"
-import { AddUserValidator } from "../utils/validator/UserValidator"
+import { AddUserValidator, UpdateUserConfigurationValidator } from "../utils/validator/UserValidator"
 import { validate } from "../utils/validator/ValidatorUtil"
 
 async function getProfileHandler(req, res, next) {
@@ -10,6 +10,29 @@ async function getProfileHandler(req, res, next) {
         res.status(200).json({
             success: false,
             data: user,
+        })
+    } catch (err) {
+        next(err)
+    }
+}
+
+async function updateConfiguration(req, res, next) {
+    try {
+
+        const { id } = req.auth
+        const { pricePerMeter, tresholdSystem, treshold } = req.body
+
+        const schema = new UpdateUserConfigurationValidator()
+        schema.pricePerMeter = pricePerMeter
+        schema.tresholdSystem = tresholdSystem
+        schema.treshold = treshold
+
+        await validate(schema)
+
+        await edit(id, pricePerMeter, tresholdSystem, treshold)
+
+        res.status(200).json({
+            success: true,
         })
     } catch (err) {
         next(err)
@@ -47,4 +70,5 @@ async function postCreateUserHandler(req, res, next) {
 export {
     getProfileHandler,
     postCreateUserHandler,
+    updateConfiguration,
 }

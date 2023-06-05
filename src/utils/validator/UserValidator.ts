@@ -1,5 +1,22 @@
 import { IsEmail, isEmail, IsIn, IsInt, IsNotEmpty, IsNumber, IsOptional, IsString, IsUUID, Length, min, Min, minLength } from "class-validator";
 
+export class UpdateUserConfigurationValidator {
+    
+    @IsOptional()
+    @IsIn(["on", "off"])
+    tresholdSystem: string
+
+    @IsOptional()
+    @IsNumber()
+    treshold: number
+
+    @IsOptional()
+    @IsNumber()
+    @Min(0)
+    pricePerMeter: number
+    
+}
+
 export class AddUserValidator {
     
     @IsString()

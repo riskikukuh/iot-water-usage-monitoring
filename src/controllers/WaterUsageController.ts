@@ -37,8 +37,8 @@ async function addWaterUsageHandler(req, res, next) {
 
         const maxTresholdCounter = 5
 
-        if (await getTresholdSystem()) {
-            const treshold = await getTreshold()
+        if (user.treshold_system == "on") {
+            const treshold = user.treshold
             if (treshold > 0) {
                 const todayUsages = await getTodayUsage(user_id)
                 let totalTodayUsages = 0
