@@ -77,7 +77,9 @@ async function getUsageByDate(user_id: string, startDateParams: number, endDateP
     if (group5minute) {
 
         const now = new Date()
-        const unit = await getUnit()
+        var unit = await getUnit()
+
+        unit = unit.split('/')[0];
 
         let minute = 5
         let condition = true
@@ -123,7 +125,10 @@ async function getUsageByDate(user_id: string, startDateParams: number, endDateP
         return resultWaterUsages
     }
 
-    return data
+    return data.map((value) => {
+        value.unit = value.unit.split('/')[0];
+        return value;
+    });
 }
 
 export {

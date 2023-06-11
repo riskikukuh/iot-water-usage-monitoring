@@ -48,7 +48,7 @@ async function addWaterUsageHandler(req, res, next) {
                 }
                 let newTresholdCounter = 0
                 if (totalTodayUsages >= treshold) {
-                    if (user.treshold_counter > maxTresholdCounter) {
+                    if (user.treshold_counter >= maxTresholdCounter) {
                         newTresholdCounter = 0
                         const msgId = await pushFCMNotification(user_id, "Peringatan Penggunaan Air", "Jumlah pemakaian hari ini telah mencapai ambang batas!", NotificationType.ALERT)
                     } else {
@@ -75,12 +75,14 @@ async function addWaterUsageHandler(req, res, next) {
 async function getTodayWaterUsageHandler(req, res, next) {
     try {
         const { id } = req.auth
-        const todaWaterUsages = await getTodayUsage(id)
+        const todayWaterUsages = await getTodayUsage(id)
+
+        todayWaterUsages.sort((a, b) => a.created_at > b.created_at ? 1 : -1);
 
         res.statusCode = 200
         res.json({
             success: true,
-            data: todaWaterUsages,
+            data: todayWaterUsages,
         })
     } catch (err) {
         console.error(`Error, ${err}`)

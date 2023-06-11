@@ -7,7 +7,10 @@ async function getAll(user_id: string): Promise<Bill[]> {
             user_id,
         }
     })
-    return bills
+    return bills.map((bill) => {
+        bill.unit = bill.unit.split('/')[0];
+        return bill;
+    });
 }
 
 async function create(user_id: string, { waterUsage, unit, startDate, endDate, nominal, pricePerMeter }): Promise<string> {

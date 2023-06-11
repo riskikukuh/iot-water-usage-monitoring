@@ -31,15 +31,17 @@ async function getHistories(user_id: string, startDate: number | null = null, en
         user_id: user_id,
         created_at: startDate != null && endDate != null ? Between(startDate, endDate) : null,
     }
-    console.log(params)
-    const data = AppDataSource.getRepository(History).find({
+    const data = await AppDataSource.getRepository(History).find({
         where: params,
         order: {
             created_at: 'ASC',
         }
     })
 
-    return data
+    return data.map((value) => {
+        value.unit = value.unit.split('/')[0];
+        return value;
+    });
 }
 
 async function getUsageAndPriceByDate(user_id: string, startDate: number, endDate: number): Promise<UsagePriceType> {
