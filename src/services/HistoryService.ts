@@ -10,16 +10,16 @@ async function create(user_id:string, startDate: number, endDate: number) : Prom
     const { price_per_meter } = await getProfile(user_id)
     const totalUsage = await getTotalUsageByDate(user_id, startDate, endDate)
     const history       = new History()
+    const usageInMeter  = Math.round(totalUsage / 1000);
     history.user_id     = user_id
-    history.water_usage = totalUsage
-    history.unit        = await getUnit()
+    history.water_usage = usageInMeter;
+    // history.unit        = await getUnit()
+    history.unit        = "meter"
     history.start_date  = startDate
     history.end_date    = endDate
     history.price_per_meter = price_per_meter
-    history.nominal = Math.round((totalUsage / 1000) * price_per_meter)
+    history.nominal = Math.round(usageInMeter * price_per_meter)
     history.created_at  = + new Date()
-
-    console.log(history)
 
     const inserted = await AppDataSource.getRepository(History).save(history)
 

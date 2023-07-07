@@ -30,12 +30,13 @@ async function getAllBill(req, res, next) {
 
 async function createBillNonApi(userId: string, startDate: number, endDate: number) {
     try {
-        const unit = await getUnit()
+        // const unit = await getUnit()
+        const unit = "meter"
         const user = await getProfile(userId)
         const { totalUsage, totalBill } = await getUsageAndPriceByDate(userId, startDate, endDate)
         // const billId = ''
         const billId = await create(userId, {
-            waterUsage: totalUsage,
+            waterUsage: totalUsage / 1000,
             startDate,
             endDate,
             nominal: totalBill,
