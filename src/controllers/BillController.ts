@@ -35,7 +35,7 @@ async function createBillNonApi(userId: string, startDate: number, endDate: numb
         const unit = "meter"
         const user = await getProfile(userId)
         const { totalUsage } = await getUsageAndPriceByDate(userId, startDate, endDate)
-        const totalBill = totalUsage * user.price_per_meter
+        const totalBill = Math.round(totalUsage * user.price_per_meter)
         // const billId = ''
         const billId = await create(userId, {
             waterUsage: totalUsage,

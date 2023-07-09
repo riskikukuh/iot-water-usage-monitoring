@@ -18,7 +18,7 @@ AppDataSource.initialize().then(async () => {
     const { id, firstname } = user
 
     // const startDate = +new Date(year, month - 1, 1, 0, 0, 0)
-    const startDate = +new Date(year, month, 0, 0, 0, 0)
+    const startDate = +new Date(year, month, 1, 0, 0, 0)
     const endDate = +new Date(year, month, day, 0, 0, 0)
 
     console.log(`# Generating bill for 1 month for ${firstname}, start: ${+startDate} end: ${+endDate}`)
