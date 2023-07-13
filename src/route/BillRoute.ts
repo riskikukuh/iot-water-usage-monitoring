@@ -1,12 +1,18 @@
 import { Router } from "express"
 import { 
-    getAllBill
+    getAllBill,
+    getUnpaidBillOfficer,
+    getPaidBillOfficer,
 } from "../controllers/BillController"
 import { jwtMiddleware } from "../utils/AuthUtil"
 
 const billRouter = Router()
 
 billRouter.get("/bills", jwtMiddleware(), getAllBill)
+
+billRouter.get('/bills/paid', jwtMiddleware(), getPaidBillOfficer)
+
+billRouter.get('/bills/unpaid', jwtMiddleware(), getUnpaidBillOfficer)
 
 // Disabled
 // billRouter.post('/bills', jwtMiddleware(), postCreateUserHandler)

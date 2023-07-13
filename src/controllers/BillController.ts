@@ -2,9 +2,10 @@ import { User } from "../entity/User"
 import {
     getAll,
     create,
+    getPaidBillByStatus,
 } from "../services/BillService"
 import {
-    getProfile
+    getProfile, getUserById
 } from "../services/UserService"
 import {
     getUsageAndPriceByDate
@@ -15,11 +16,47 @@ import {
     create as createNotification
 } from "../services/NotificationService"
 import { NotificationType } from "../utils/NotificationUtil"
+import { UnauthorizedError } from "../utils/errors/UnauthorizedError"
+import { BillStatus } from "../utils/BillUtil"
 
 async function getAllBill(req, res, next) {
     try {
         const { id } = req.auth
         const bills = await getAll(id)
+        res.status(200).json({
+            success: true,
+            data: bills,
+        })
+    } catch (err) {
+        next(err)
+    }
+}
+
+async function getPaidBillOfficer(req, res, next) {
+    try {
+        const { id } = req.auth
+        const user = await getUserById(id)
+        if (user.role != 'officer') {
+            throw new UnauthorizedError()
+        }
+        const bills = await getPaidBillByStatus(BillStatus.PAID);
+        res.status(200).json({
+            success: true,
+            data: bills,
+        })
+    } catch (err) {
+        next(err)
+    }
+}
+
+async function getUnpaidBillOfficer(req, res, next) {
+    try {
+        const { id } = req.auth
+        const user = await getUserById(id)
+        if (user.role != 'officer') {
+            throw new UnauthorizedError()
+        }
+        const bills = await getPaidBillByStatus(BillStatus.UNPAID);
         res.status(200).json({
             success: true,
             data: bills,
@@ -88,5 +125,7 @@ async function createBillNonApi(userId: string, startDate: number, endDate: numb
 
 export {
     getAllBill,
-    createBillNonApi
+    createBillNonApi,
+    getPaidBillOfficer,
+    getUnpaidBillOfficer,
 }

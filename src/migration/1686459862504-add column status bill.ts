@@ -5,7 +5,7 @@ export class AddColumnStatusBill1686459862504 implements MigrationInterface {
     public async up(queryRunner: QueryRunner): Promise<void> {
 
         // Status bill
-        // unpaid, paid
+        // UNPAID, PAID
         await queryRunner.addColumn('bills', new TableColumn(
             {
                 name: 'status',

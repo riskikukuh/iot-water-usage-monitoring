@@ -1,5 +1,6 @@
 import { AppDataSource } from "../data-source"
 import { Bill } from "../entity/Bill"
+import { BillStatus } from "../utils/BillUtil"
 
 async function getAll(user_id: string): Promise<Bill[]> {
     const bills = await AppDataSource.getRepository(Bill).find({
@@ -8,9 +9,21 @@ async function getAll(user_id: string): Promise<Bill[]> {
         }
     })
     return bills.map((bill) => {
-        bill.unit = bill.unit.split('/')[0];
-        return bill;
-    });
+        bill.unit = bill.unit.split('/')[0]
+        return bill
+    })
+}
+
+async function getPaidBillByStatus(status: BillStatus): Promise<Bill[]> {
+    const bills = await AppDataSource.getRepository(Bill).find({
+        where: {
+            status: status,
+        }
+    })
+    return bills.map((bill) => {
+        bill.unit = bill.unit.split('/')[0]
+        return bill
+    })
 }
 
 async function create(user_id: string, { waterUsage, unit, startDate, endDate, nominal, pricePerMeter }): Promise<string> {
@@ -44,4 +57,5 @@ export {
     getAll,
     create,
     deleteBill,
+    getPaidBillByStatus,
 }
