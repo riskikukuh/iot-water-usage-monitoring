@@ -55,9 +55,6 @@ async function addWaterUsageHandler(req, res, next) {
                 const dailyUsages = await getTodayUsage(user_id)
                 const monthlyUsages = await getHistories(user_id, startDate, endDate)
 
-                console.log(`Daily usage ${dailyUsages}`)
-                console.log(`Monthly usage ${monthlyUsages}`)
-
                 let totalTodayUsages = 0
                 for (let i = 0; i < dailyUsages.length; i++) {
                     const usage = dailyUsages[i]
@@ -67,10 +64,12 @@ async function addWaterUsageHandler(req, res, next) {
                         totalTodayUsages += usage.usage
                     }
                 }
+                console.log(`Daily usage ${totalTodayUsages}`)
                 for (let i = 0; i < monthlyUsages.length; i++) {
                     const usage = monthlyUsages[i]
                     totalTodayUsages += usage.water_usage
                 }
+                console.log(`Total usage ${totalTodayUsages}`)
                 let newTresholdCounter = 0
                 if (totalTodayUsages >= treshold) {
                     if (user.treshold_counter >= maxTresholdCounter) {
