@@ -69,7 +69,7 @@ async function addWaterUsageHandler(req, res, next) {
                 }
                 for (let i = 0; i < monthlyUsages.length; i++) {
                     const usage = monthlyUsages[i]
-                    totalTodayUsages += usage.usage
+                    totalTodayUsages += usage.water_usage
                 }
                 let newTresholdCounter = 0
                 if (totalTodayUsages >= treshold) {
