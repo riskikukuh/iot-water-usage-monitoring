@@ -47,7 +47,7 @@ async function addWaterUsageHandler(req, res, next) {
                 const year = now.getFullYear()
 
                 const startDate = +new Date(year, month, 1, 0, 0, 0)
-                const endDate = +new Date(year, month +1, 0, 23, 59, 59)
+                const endDate = +new Date(year, month +1, 1, 0, 0, 0)
 
                 console.log(`StartDate this month ${startDate}`)
                 console.log(`EndDate this month ${endDate}`)
