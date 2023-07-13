@@ -40,10 +40,32 @@ async function addWaterUsageHandler(req, res, next) {
         if (user.treshold_system == "on") {
             const treshold = user.treshold
             if (treshold > 0) {
-                const todayUsages = await getTodayUsage(user_id)
+                // const todayUsages = await getTodayUsage(user_id)
+                const now = new Date()
+                // now.toLocaleString('en-US', { timeZone: 'Asia/Jakarta' });
+                const month = now.getMonth()
+                const year = now.getFullYear()
+
+                const startDate = +new Date(year, month, 1, 0, 0, 0)
+                const endDate = +new Date(year, month +1, 0).getDate()
+
+                console.log(`StartDate this month ${startDate}`)
+                console.log(`EndDate this month ${endDate}`)
+                
+                const dailyUsages = await getTodayUsage(user_id)
+                const monthlyUsages = await getUsageByDate(user_id, startDate, endDate)
+
                 let totalTodayUsages = 0
-                for (let i = 0; i < todayUsages.length; i++) {
-                    const usage = todayUsages[i]
+                for (let i = 0; i < dailyUsages.length; i++) {
+                    const usage = dailyUsages[i]
+                    if (usage.unit.includes('liter')) {
+                        totalTodayUsages += usage.usage / 1000
+                    } else if (usage.unit.includes('meter')) {
+                        totalTodayUsages += usage.usage
+                    }
+                }
+                for (let i = 0; i < monthlyUsages.length; i++) {
+                    const usage = monthlyUsages[i]
                     totalTodayUsages += usage.usage
                 }
                 let newTresholdCounter = 0
