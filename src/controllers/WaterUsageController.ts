@@ -53,7 +53,10 @@ async function addWaterUsageHandler(req, res, next) {
                 console.log(`EndDate this month ${endDate}`)
                 
                 const dailyUsages = await getTodayUsage(user_id)
-                const monthlyUsages = await getUsageByDate(user_id, startDate, endDate)
+                const monthlyUsages = await getHistories(user_id, startDate, endDate)
+
+                console.log(`Daily usage ${dailyUsages}`)
+                console.log(`Monthly usage ${monthlyUsages}`)
 
                 let totalTodayUsages = 0
                 for (let i = 0; i < dailyUsages.length; i++) {
