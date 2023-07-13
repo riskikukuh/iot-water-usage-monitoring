@@ -3,6 +3,7 @@ import {
     addWaterUsageHandler, 
     getTodayWaterUsageHandler, 
     getHistoyWaterUsageHandler,
+    getMonthlyWaterUsageHandler,
 } from "../controllers/WaterUsageController"
 import { jwtMiddleware } from "../utils/AuthUtil"
 
@@ -13,6 +14,8 @@ waterUsageRouter.post("/waterUsage", addWaterUsageHandler)
 
 /* Get Water usage for today */
 waterUsageRouter.get("/waterUsage/today", jwtMiddleware(), getTodayWaterUsageHandler)
+
+waterUsageRouter.get("/waterUsage/monthly", jwtMiddleware(), getMonthlyWaterUsageHandler)
 
 /* Get History Water usage */
 waterUsageRouter.get("/waterUsage/history", jwtMiddleware(), getHistoyWaterUsageHandler)

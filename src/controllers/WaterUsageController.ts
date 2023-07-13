@@ -55,23 +55,23 @@ async function addWaterUsageHandler(req, res, next) {
                 const dailyUsages = await getTodayUsage(user_id)
                 const monthlyUsages = await getHistories(user_id, startDate, endDate)
 
-                let totalTodayUsages = 0
+                let totalMonthlyUsages = 0
                 for (let i = 0; i < dailyUsages.length; i++) {
                     const usage = dailyUsages[i]
                     if (usage.unit.includes('liter')) {
-                        totalTodayUsages += usage.usage / 1000
+                        totalMonthlyUsages += usage.usage / 1000
                     } else if (usage.unit.includes('meter')) {
-                        totalTodayUsages += usage.usage
+                        totalMonthlyUsages += usage.usage
                     }
                 }
-                console.log(`Daily usage ${totalTodayUsages}`)
+                console.log(`Daily usage ${totalMonthlyUsages}`)
                 for (let i = 0; i < monthlyUsages.length; i++) {
                     const usage = monthlyUsages[i]
-                    totalTodayUsages += usage.water_usage
+                    totalMonthlyUsages += usage.water_usage
                 }
-                console.log(`Total usage ${totalTodayUsages}`)
+                console.log(`Total usage ${totalMonthlyUsages}`)
                 let newTresholdCounter = 0
-                if (totalTodayUsages >= treshold) {
+                if (totalMonthlyUsages >= treshold) {
                     if (user.treshold_counter >= maxTresholdCounter) {
                         newTresholdCounter = 0
                         const msgId = await pushFCMNotification(user_id, "Peringatan Penggunaan Air", "Jumlah pemakaian hari ini telah mencapai ambang batas!", NotificationType.ALERT)
@@ -89,6 +89,46 @@ async function addWaterUsageHandler(req, res, next) {
             data: {
                 id: insertedWaterUsage,
             }
+        })
+    } catch (err) {
+        console.error(`Error ${err}`);
+        next(err);
+    }
+}
+
+async function getMonthlyWaterUsageHandler(req, res, next) {
+    try {
+        const { id } = req.auth
+        const now = new Date()
+        // now.toLocaleString('en-US', { timeZone: 'Asia/Jakarta' });
+        const month = now.getMonth()
+        const year = now.getFullYear()
+        
+        const startDate = +new Date(year, month, 1, 0, 0, 0)
+        const endDate = +new Date(year, month +1, 1, 0, 0, 0)
+
+        const dailyUsages = await getTodayUsage(id)
+        const monthlyUsages = await getHistories(id, startDate, endDate)
+
+        let totalMonthlyUsages = 0
+        for (let i = 0; i < dailyUsages.length; i++) {
+            const usage = dailyUsages[i]
+            if (usage.unit.includes('liter')) {
+                totalMonthlyUsages += usage.usage / 1000
+            } else if (usage.unit.includes('meter')) {
+                totalMonthlyUsages += usage.usage
+            }
+        }
+        for (let i = 0; i < monthlyUsages.length; i++) {
+            const usage = monthlyUsages[i]
+            totalMonthlyUsages += usage.water_usage
+        }
+        res.statusCode = 200
+        res.json({
+            success: true,
+            data: {
+                montly_usage: totalMonthlyUsages,
+            },
         })
     } catch (err) {
         console.error(`Error ${err}`);
@@ -170,4 +210,5 @@ export {
     setupSocketWaterUsage,
     getTodayWaterUsageHandler,
     getHistoyWaterUsageHandler,
+    getMonthlyWaterUsageHandler,
 }
