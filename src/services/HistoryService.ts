@@ -49,8 +49,12 @@ async function getUsageAndPriceByDate(user_id: string, startDate: number, endDat
         .createQueryBuilder('h')
         .select('h.user_id')
         .addSelect('SUM(h.water_usage)', 'total_usage')
-        .addSelect('SUM(h.nominal)', 'total_bill')
-        .where('h.user_id = :id', { id: user_id})
+        // .addSelect('SUM(h.nominal)', 'total_bill')
+        .where('h.user_id = :id AND created_at BETWEEN :startDate AND :endDate', { 
+            id: user_id, 
+            startDate,
+            endDate,
+        })
         .groupBy('h.user_id')
         .getRawOne()
         

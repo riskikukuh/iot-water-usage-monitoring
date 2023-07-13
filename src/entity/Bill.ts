@@ -29,6 +29,9 @@ export class Bill {
     @Column()
     price_per_meter: number
 
+    @Column()
+    status: string
+
     @Column({
         default: +new Date()
     })

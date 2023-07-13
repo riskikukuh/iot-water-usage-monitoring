@@ -11,7 +11,8 @@ import {
 } from "../services/HistoryService"
 import { getUnit } from "../services/ConfigService"
 import {
-    pushFCMNotification
+    pushFCMNotification, 
+    create as createNotification
 } from "../services/NotificationService"
 import { NotificationType } from "../utils/NotificationUtil"
 
@@ -33,10 +34,11 @@ async function createBillNonApi(userId: string, startDate: number, endDate: numb
         // const unit = await getUnit()
         const unit = "meter"
         const user = await getProfile(userId)
-        const { totalUsage, totalBill } = await getUsageAndPriceByDate(userId, startDate, endDate)
+        const { totalUsage } = await getUsageAndPriceByDate(userId, startDate, endDate)
+        const totalBill = Math.round(totalUsage * user.price_per_meter)
         // const billId = ''
         const billId = await create(userId, {
-            waterUsage: totalUsage / 1000,
+            waterUsage: totalUsage,
             startDate,
             endDate,
             nominal: totalBill,
@@ -53,11 +55,12 @@ async function createBillNonApi(userId: string, startDate: number, endDate: numb
         const billTitle = `Tagihan untuk bulan ${thisMonthName}`
         const billDescription = `
             Halo tagihan untuk bulan ${thisMonthName} telah dibuat.
-            Tagihan anda sebesar ${totalBill} dengan harga per meter ${user.price_per_meter}
+            Tagihan pemakaian air anda sebesar ${totalBill} dengan pemakaian sebesar ${totalUsage} ${unit}, dengan harga per meter ${user.price_per_meter}
         `
 
         if (billId) {
-            await pushFCMNotification(userId, billTitle, billDescription, NotificationType.REMINDER)
+            const messageId = await pushFCMNotification(userId, billTitle, billDescription, NotificationType.REMINDER)
+            await createNotification(userId, billTitle, billDescription, NotificationType.REMINDER, messageId)
         }
 
         return billId
