@@ -1,3 +1,5 @@
+import { getTodayUsage } from "../services/WaterUsageService"
+import { getHistories } from "../services/HistoryService"
 import { getProfile, create, edit } from "../services/UserService"
 import { rawToSafeUser } from "../utils/mapper/UserMapper"
 import { AddUserValidator, UpdateUserConfigurationValidator } from "../utils/validator/UserValidator"
@@ -7,6 +9,33 @@ async function getProfileHandler(req, res, next) {
     try {
         const { id } = req.auth
         const user = rawToSafeUser(await getProfile(id))
+
+        const now = new Date()
+        const month = now.getMonth()
+        const year = now.getFullYear()
+        
+        const startDate = +new Date(year, month, 1, 0, 0, 0)
+        const endDate = +new Date(year, month +1, 1, 0, 0, 0)
+
+        const dailyUsages = await getTodayUsage(id)
+        const monthlyUsages = await getHistories(id, startDate, endDate)
+
+        let totalMonthlyUsages = 0
+        for (let i = 0; i < dailyUsages.length; i++) {
+            const usage = dailyUsages[i]
+            if (usage.unit.includes('liter')) {
+                totalMonthlyUsages += usage.usage / 1000
+            } else if (usage.unit.includes('meter')) {
+                totalMonthlyUsages += usage.usage
+            }
+        }
+        for (let i = 0; i < monthlyUsages.length; i++) {
+            const usage = monthlyUsages[i]
+            totalMonthlyUsages += usage.water_usage
+        }
+
+        user['monthly_usage'] = totalMonthlyUsages
+
         res.status(200).json({
             success: false,
             data: user,

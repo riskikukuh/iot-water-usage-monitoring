@@ -99,8 +99,8 @@ async function addWaterUsageHandler(req, res, next) {
 async function getMonthlyWaterUsageHandler(req, res, next) {
     try {
         const { id } = req.auth
+        
         const now = new Date()
-        // now.toLocaleString('en-US', { timeZone: 'Asia/Jakarta' });
         const month = now.getMonth()
         const year = now.getFullYear()
         
