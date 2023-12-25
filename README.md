@@ -27,9 +27,9 @@ Proses tersebut dilakukan berulang kali pada setiap rumah, membuat petugas air m
 
 ### Preview
 
-![Prototype](https://github.com/riskikukuh/iot-water-usage-monitoring/blob/master/images/prototype.jpg?raw=true)
-
-![Preview Mobile App](https://github.com/riskikukuh/iot-water-usage-monitoring/blob/master/images/today-usage.jpg?raw=true)
+| Image                                                        | Screenshot                                                   |
+| ------------------------------------------------------------ | ------------------------------------------------------------ |
+| ![Prototype](https://github.com/riskikukuh/iot-water-usage-monitoring/blob/master/images/prototype.jpg?raw=true) | ![Preview Mobile App](https://github.com/riskikukuh/iot-water-usage-monitoring/blob/master/images/today-usage.jpg?raw=true) |
 
 
 
