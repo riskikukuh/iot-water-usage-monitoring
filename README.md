@@ -42,7 +42,14 @@ Proses tersebut dilakukan berulang kali pada setiap rumah, membuat petugas air m
 | 3    | Mobile App  | [→](https://github.com/riskikukuh/mobile-app-iot-water-usage-monitoring) |
 
 
+## Authors
+- [riskikukuh](https://github.com/riskikukuh)
 
-### Contact
 
-Riski Kukuh Wiranata - [@riskikukuh_](https://twitter.com/riskikukuh_) - <a href="mailto:riskikukuh.me@gmail.com">riskikukuh.me@gmail.com</a>
+## Support & Feedback
+
+If you need support or have any feedback, please reach out
+
+- Email: [riskikukuh.me@gmail.com](mailto:riskikukuh.me@gmail.com)
+- Github: [riskikukuh](https://github.com/riskikukuh)
+- LinkedIn: [Riski Kukuh](https://www.linkedin.com/in/riski-kukuh/)
